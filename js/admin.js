@@ -693,7 +693,7 @@ async function loadServices() {
 
   body.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (btn.dataset.action === 'editsvc') openServiceEdit(parseInt(btn.dataset.id));
+      if (btn.dataset.action === 'editsvc') openServiceEdit(btn.dataset.id);
       if (btn.dataset.action === 'delsvc') {
         if (!confirm('Видалити цю послугу?')) return;
         await api('/api/services/' + btn.dataset.id, 'DELETE');
@@ -771,7 +771,7 @@ async function loadFaq() {
 
   body.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (btn.dataset.action === 'editfaq') openFaqEdit(parseInt(btn.dataset.id));
+      if (btn.dataset.action === 'editfaq') openFaqEdit(btn.dataset.id);
       if (btn.dataset.action === 'delfaq') {
         if (!confirm('Видалити це запитання?')) return;
         await api('/api/faq/' + btn.dataset.id, 'DELETE');
@@ -1059,7 +1059,7 @@ function initDragDrop(tbody, endpoint) {
     // Reorder in DOM
     allRows.forEach(r => tbody.appendChild(r));
     // Update sort_order in API
-    const ids = allRows.map(r => parseInt(r.dataset.id));
+    const ids = allRows.map(r => r.dataset.id);
     for (let i = 0; i < ids.length; i++) {
       try { await api('/api/' + endpoint + '/' + ids[i], 'PATCH', { sort_order: i }); } catch(_e) {}
     }
