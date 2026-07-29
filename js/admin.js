@@ -207,6 +207,8 @@ const dayNamesFull = ['Неділя', 'Понеділок', 'Вівторок', 
 const monthNames = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
   'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 7); // 07:00 — 20:00
+let calWeekGlobalStart = 9;
+let calDayStartH = 9;
 let calSchedules = null; // loaded location schedules for dynamic calendar hours
 
 async function loadCalSchedules() {
@@ -386,18 +388,23 @@ function renderWeek() {
 
   // Find global min start across all days for time column
   let globalStart = 23;
+  let globalEnd = 0;
   for (let i = 0; i < 7; i++) {
     const d = new Date(ws);
     d.setDate(d.getDate() + i);
     const dow = d.getDay();
     const wh = getDayWorkHours(dow);
     if (Math.floor(wh.start) < globalStart) globalStart = Math.floor(wh.start);
+    if (Math.ceil(wh.end) > globalEnd) globalEnd = Math.ceil(wh.end);
   }
+  calWeekGlobalStart = globalStart;
 
   // Body
+  const topPad = 30;
+  const gridH = (globalEnd - globalStart) * 60 + topPad;
   let bHtml = '<div class="cal-week-grid">';
-  bHtml += '<div class="cal-week-times">';
-  for (let h = globalStart; h <= 21; h++) {
+  bHtml += '<div class="cal-week-times" style="padding-top:' + topPad + 'px;">';
+  for (let h = globalStart; h <= globalEnd; h++) {
     bHtml += `<div class="cal-week-time-label">${String(h).padStart(2, '0')}:00</div>`;
   }
   bHtml += '</div>';
@@ -416,14 +423,14 @@ function renderWeek() {
     // Calculate layout for overlapping
     const layout = computeLayout(dayAppts);
 
-    bHtml += `<div class="cal-week-col${today}" data-date="${ds}">`;
+    bHtml += `<div class="cal-week-col${today}" data-date="${ds}" style="height:${gridH}px;">`;
     for (let h = startH; h <= endH; h++) {
-      bHtml += `<div class="cal-slot-line" style="top:${(h - globalStart) * 60}px"></div>`;
-      bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${(h - globalStart) * 60 + 30}px"></div>`;
+      bHtml += `<div class="cal-slot-line" style="top:${topPad + (h - globalStart) * 60}px"></div>`;
+      bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${topPad + (h - globalStart) * 60 + 30}px"></div>`;
     }
 
     layout.forEach(a => {
-      const pos = timeToTopDynamic(a.appt_time || '09:00', globalStart);
+      const pos = topPad + timeToTopDynamic(a.appt_time || '09:00', globalStart);
       const height = 50;
       const totalCols = a._group.length;
       const leftPct = (a._colIndex / totalCols) * 100;
@@ -460,20 +467,23 @@ function renderDay() {
   const wh = getDayWorkHours(dow);
   const startH = Math.floor(wh.start);
   const endH = Math.ceil(wh.end);
+  calDayStartH = startH;
 
-  let bHtml = '<div class="cal-week-times">';
+  const topPad = 30;
+  const timelineH = (endH - startH) * 60 + topPad;
+  let bHtml = '<div class="cal-week-times" style="padding-top:' + topPad + 'px;">';
   for (let h = startH; h <= endH; h++) {
     bHtml += `<div class="cal-week-time-label">${String(h).padStart(2, '0')}:00</div>`;
   }
-  bHtml += '</div><div class="cal-day-timeline' + today + '">';
+  bHtml += '</div><div class="cal-day-timeline' + today + '" style="height:' + timelineH + 'px;">';
 
   for (let h = startH; h <= endH; h++) {
-    bHtml += `<div class="cal-slot-line" style="top:${(h - startH) * 60}px"></div>`;
-    bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${(h - startH) * 60 + 30}px"></div>`;
+    bHtml += `<div class="cal-slot-line" style="top:${topPad + (h - startH) * 60}px"></div>`;
+    bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${topPad + (h - startH) * 60 + 30}px"></div>`;
   }
 
   layout.forEach(a => {
-    const pos = timeToTopDynamic(a.appt_time || '09:00', startH);
+    const pos = topPad + timeToTopDynamic(a.appt_time || '09:00', startH);
     const height = 55;
     bHtml += `<div class="cal-appt cal-appt--${a.status}"
       data-id="${a.id}"
@@ -579,20 +589,32 @@ function timeToTopDynamic(timeStr, baseHour) {
 function updateCurrentTimeLine() {
   const now = new Date();
   const todayStr = iso(now);
-  const dow = now.getDay();
-  const wh = getDayWorkHours(dow);
-  const baseHour = Math.floor(wh.start);
-  const minutes = (now.getHours() - baseHour) * 60 + now.getMinutes();
-  if (minutes < 0) return;
+  const topPad = 30;
 
-  document.querySelectorAll('.cal-week-col.today-col, .cal-day-timeline.today-col').forEach(col => {
+  document.querySelectorAll('.cal-week-col.today-col').forEach(col => {
     let line = col.querySelector('.cal-current-line');
     if (!line) {
       line = document.createElement('div');
       line.className = 'cal-current-line';
       col.appendChild(line);
     }
-    line.style.top = minutes + 'px';
+    const minutes = (now.getHours() - calWeekGlobalStart) * 60 + now.getMinutes();
+    if (minutes < 0) { line.style.display = 'none'; return; }
+    line.style.display = 'block';
+    line.style.top = (topPad + minutes) + 'px';
+  });
+
+  document.querySelectorAll('.cal-day-timeline.today-col').forEach(col => {
+    let line = col.querySelector('.cal-current-line');
+    if (!line) {
+      line = document.createElement('div');
+      line.className = 'cal-current-line';
+      col.appendChild(line);
+    }
+    const minutes = (now.getHours() - calDayStartH) * 60 + now.getMinutes();
+    if (minutes < 0) { line.style.display = 'none'; return; }
+    line.style.display = 'block';
+    line.style.top = (topPad + minutes) + 'px';
   });
 }
 

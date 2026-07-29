@@ -131,12 +131,15 @@ a{text-decoration:none;color:inherit}
 .appointment__form input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1)}
 .appointment__form input:user-invalid,.appointment__form select:user-invalid{outline:2px solid #ef4444}
 .appointment__form input:user-valid{outline:2px solid #22c55e}
-.appointment__datetime{display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr;gap:16px}
+.appointment__datetime{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .appointment__confirm{display:none;margin-top:24px;font-size:1.1rem;font-weight:600;animation:fadeIn .4s ease}
 /* Testimonials */
 .testimonials{padding:100px 0}
 .testimonials__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.testimonial-card{background:var(--w);border-radius:16px;padding:32px 28px;border:1px solid rgba(0,0,0,.05);box-shadow:0 2px 12px rgba(0,0,0,.03);transition:border-color .3s,box-shadow .3s}
+.testimonials__carousel{position:relative;display:flex;align-items:center;gap:8px}
+.testimonials__viewport{overflow:hidden;flex:1;width:100%}
+.testimonials__track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1);will-change:transform;gap:20px;padding:4px}
+.testimonial-card{background:var(--w);border-radius:16px;padding:32px 28px;border:1px solid rgba(0,0,0,.05);box-shadow:0 2px 12px rgba(0,0,0,.03);transition:border-color .3s,box-shadow .3s;flex:0 0 33.333%;min-width:0;padding:28px 20px}
 .testimonial-card:hover{border-color:rgba(14,116,149,.1);box-shadow:0 8px 28px rgba(14,116,149,.06)}
 .testimonial-card__quote{color:var(--pl);margin-bottom:16px;flex-shrink:0}
 .testimonial-card__text{font-size:.95rem;color:var(--g);margin-bottom:24px;line-height:1.75;font-style:normal}
@@ -146,6 +149,12 @@ a{text-decoration:none;color:inherit}
 .testimonial-card__author strong{display:block;font-size:.9rem}
 .testimonial-card__author span{font-size:.78rem;color:var(--g)}
 .testimonial-card__google{opacity:.45}
+.carousel-btn{width:40px;height:40px;border-radius:50%;border:1px solid rgba(0,0,0,.1);background:var(--w);color:var(--d);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.carousel-btn:hover{background:var(--p);color:#fff;border-color:var(--p);box-shadow:0 4px 16px rgba(14,116,149,.25)}
+.carousel-btn:active{transform:scale(.93)}
+.carousel-dots{display:flex;justify-content:center;gap:8px;margin-top:24px}
+.carousel-dot{width:8px;height:8px;border-radius:50%;border:none;background:rgba(14,116,149,.2);cursor:pointer;padding:0;transition:all .25s;flex-shrink:0}
+.carousel-dot.active{background:var(--p);width:24px;border-radius:4px}
 /* FAQ */
 .faq{padding:100px 0;background:var(--l)}
 .faq__list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
@@ -190,7 +199,6 @@ a{text-decoration:none;color:inherit}
 .reveal-visible{opacity:1;transform:translateY(0)}
 .stats__item.reveal{transition-delay:calc(var(--i,0) * .1s)}
 .service-card.reveal{transition-delay:calc(var(--i,0) * .08s)}
-.testimonial-card.reveal{transition-delay:calc(var(--i,0) * .12s)}
 .faq__item.reveal{transition-delay:calc(var(--i,0) * .06s)}
 /* Stagger delays */
 .stats__item:nth-child(1){--i:0}.stats__item:nth-child(2){--i:1}
@@ -228,9 +236,6 @@ a{text-decoration:none;color:inherit}
 .faq__page-btn.active{background:var(--p);color:#fff;border-color:var(--p)}
 .faq__page-btn:disabled{opacity:.35;cursor:default}
 
-.testimonials__grid .testimonial-card:nth-child(1){--i:0}
-.testimonials__grid .testimonial-card:nth-child(2){--i:1}
-.testimonials__grid .testimonial-card:nth-child(3){--i:2}
 .faq__list .faq__item:nth-child(1){--i:0}.faq__list .faq__item:nth-child(2){--i:1}
 .faq__list .faq__item:nth-child(3){--i:2}.faq__list .faq__item:nth-child(4){--i:3}
 .faq__list .faq__item:nth-child(5){--i:4}
@@ -264,6 +269,9 @@ a{text-decoration:none;color:inherit}
   .about__credentials li{justify-content:center;text-align:left}
   .contacts__inner{grid-template-columns:1fr;gap:24px}
   .contacts__map{min-height:280px}
+  .testimonial-card{flex:0 0 50%;padding:24px 18px}
+  .testimonial-card__text{font-size:.88rem;margin-bottom:18px}
+  .testimonial-card__avatar{width:34px;height:34px;font-size:.75rem}
 }
 @media(max-width:768px){
   body{padding-bottom:64px}
@@ -286,7 +294,11 @@ a{text-decoration:none;color:inherit}
   .stats__item:nth-child(odd){border-right:1px solid rgba(0,0,0,.05)}
   .services__grid{grid-template-columns:1fr}
   .appointment__datetime{grid-template-columns:1fr}
-  .testimonials__grid{grid-template-columns:1fr}
+  .carousel-btn{display:none}
+  .testimonials__carousel{gap:0}
+  .testimonial-card{flex:0 0 100%;padding:28px 22px}
+  .testimonial-card__text{font-size:.95rem;margin-bottom:24px}
+  .testimonial-card__avatar{width:40px;height:40px;font-size:.82rem}
   .footer__inner{flex-direction:column;text-align:center}
   .footer__nav{flex-wrap:wrap;justify-content:center}
   .back-to-top{bottom:80px;right:20px;width:42px;height:42px}

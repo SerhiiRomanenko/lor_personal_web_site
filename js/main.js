@@ -45,6 +45,9 @@ if (headerStatus) {
 /* ========== Dynamic content from API ========== */
 loadDynamicContent();
 
+/* ========== Testimonials Carousel ========== */
+initTestimonialsCarousel();
+
 /* ========== Dynamic years of experience (from 2014-05-30) ========== */
 (function () {
   const el = document.getElementById('yearsExperience');
@@ -229,7 +232,7 @@ const revealObserver = new IntersectionObserver((entries, obs) => {
 }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
 
 document.querySelectorAll(
-  '.stats__item, .service-card, .testimonial-card, .faq__item, .about__content, .about__image, .contacts__info, .contacts__map'
+  '.stats__item, .service-card, .faq__item, .about__content, .about__image, .contacts__info, .contacts__map'
 ).forEach(el => {
   el.classList.add('reveal');
   revealObserver.observe(el);
@@ -350,7 +353,7 @@ async function loadDynamicContent() {
       }
     }
 
-    /* --- Load existing appointments for slot calculation --- */
+      /* --- Load existing appointments for slot calculation --- */
     try {
       var apptRes = await fetchWithRetry(API_BASE_URL + '/api/appointments');
       if (apptRes.ok) gAppointments = await apptRes.json();
@@ -685,6 +688,151 @@ async function buildClientTimeSlots(dateVal, serviceVal, locationId) {
     select.innerHTML = '<option value="">На цю дату вільних записів немає</option>';
     select.disabled = true;
   }
+}
+
+/* ========== Testimonials Carousel ========== */
+function initTestimonialsCarousel() {
+  const track = document.getElementById('testimonialsTrack');
+  const dotsWrap = document.getElementById('testimonialsDots');
+  const prevBtn = document.getElementById('testPrev');
+  const nextBtn = document.getElementById('testNext');
+  const viewport = document.getElementById('testimonialsViewport');
+  if (!track || !dotsWrap) return;
+
+  const googleSvg = '<svg class="testimonial-card__google" width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>';
+
+  const quoteSvg = '<svg class="testimonial-card__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>';
+
+  const testimonials = [
+    { name: 'Яна', month: 'лютий 2026', letter: 'Я', text: 'Чудовий лікар і приємне ставлення до пацієнтів. Все пояснює доступно, без поспіху, уважно оглядає. Видно, що людина знає свою справу і дійсно хоче допомогти.' },
+    { name: 'Ирина', month: 'грудень 2025', letter: 'И', text: 'Дуже вдячна лікарю. Довгий час лікувалася в різних спеціалістів - без результату. Тут з першого прийому все чітко пояснили, призначили правильне лікування, і нарешті стало значно краще. Лікаря рекомендую!' },
+    { name: 'Alinochka', month: 'березень 2026', letter: 'A', text: 'Мучилася з хронічною проблемою роками, лікувалася в інших клініках — ефекту майже не було. Після звернення до цього лікаря стан покращився вже через кілька днів. Професійний, уважний і дуже компетентний спеціаліст.' },
+    { name: 'Софія', month: 'вересень 2025', letter: 'С', text: 'Лікар дуже уважна, приділила увагу та гарно усе пояснила.' },
+    { name: 'Ігор', month: 'квітень 2026', letter: 'І', text: 'Рекомендую цього ЛОР-лікаря. Чітка діагностика, ефективне лікування, приємне спілкування. Відчувається великий досвід і відповідальне ставлення до кожного пацієнта.' },
+    { name: 'Igor', month: 'травень 2026', letter: 'I', text: 'Професійний лікар. Знайшла мою постійну причину хвороби, ходив до багатьох лікарів. Все просто і ясно пояснила. Рекомендую.' },
+  ];
+
+  track.innerHTML = testimonials.map(t => `
+    <div class="testimonial-card">
+      ${quoteSvg}
+      <p class="testimonial-card__text">${t.text}</p>
+      <div class="testimonial-card__footer">
+        <div class="testimonial-card__author">
+          <div class="testimonial-card__avatar">${t.letter}</div>
+          <div>
+            <strong>${t.name}</strong>
+            <span>${t.month}</span>
+          </div>
+        </div>
+        ${googleSvg}
+      </div>
+    </div>
+  `).join('');
+
+  const total = testimonials.length;
+  let current = 0;
+  let perPage = 3;
+  let autoTimer = null;
+  const AUTO_INTERVAL = 5000;
+
+  function getPerPage() {
+    if (window.innerWidth <= 768) return 1;
+    if (window.innerWidth <= 900) return 2;
+    return 3;
+  }
+
+  function getMaxIndex() {
+    return Math.max(0, total - perPage);
+  }
+
+  function getCardWidth() {
+    if (!viewport || !track.children.length) return 0;
+    const card = track.children[0];
+    const style = window.getComputedStyle(track);
+    const gap = parseFloat(style.gap) || 20;
+    return card.offsetWidth + gap;
+  }
+
+  function goTo(idx, resetAuto) {
+    const maxIdx = getMaxIndex();
+    current = Math.max(0, Math.min(idx, maxIdx));
+    const cardW = getCardWidth();
+    track.style.transform = `translateX(-${current * cardW}px)`;
+    dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === current)
+    );
+    if (resetAuto) startAuto();
+  }
+
+  function nextSlide() {
+    const maxIdx = getMaxIndex();
+    if (current >= maxIdx) goTo(0);
+    else goTo(current + 1);
+  }
+
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(nextSlide, AUTO_INTERVAL);
+  }
+
+  function stopAuto() {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  }
+
+  dotsWrap.innerHTML = Array.from({ length: getMaxIndex() + 1 }, (_, i) =>
+    `<button class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Відгук ${i + 1}"></button>`
+  ).join('');
+
+  if (prevBtn) prevBtn.addEventListener('click', () => {
+    if (current <= 0) goTo(getMaxIndex());
+    else goTo(current - 1);
+    startAuto();
+  });
+  if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startAuto(); });
+  dotsWrap.querySelectorAll('.carousel-dot').forEach(d => {
+    d.addEventListener('click', () => { goTo(parseInt(d.dataset.idx)); startAuto(); });
+  });
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  let touchDelta = 0;
+  if (viewport) {
+    viewport.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].clientX; touchDelta = 0; stopAuto(); }, { passive: true });
+    viewport.addEventListener('touchmove', e => { touchDelta = e.changedTouches[0].clientX - touchStartX; }, { passive: true });
+    viewport.addEventListener('touchend', () => {
+      if (Math.abs(touchDelta) > 50) {
+        if (touchDelta > 0) { if (current <= 0) goTo(getMaxIndex()); else goTo(current - 1); }
+        else { nextSlide(); }
+      }
+      touchDelta = 0;
+      startAuto();
+    }, { passive: true });
+  }
+
+  // Pause on hover
+  if (viewport) {
+    viewport.addEventListener('mouseenter', stopAuto);
+    viewport.addEventListener('mouseleave', startAuto);
+  }
+
+  // Recalculate on resize
+  window.addEventListener('resize', () => {
+    const newPer = getPerPage();
+    if (newPer !== perPage) {
+      perPage = newPer;
+      dotsWrap.innerHTML = Array.from({ length: getMaxIndex() + 1 }, (_, i) =>
+        `<button class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Відгук ${i + 1}"></button>`
+      ).join('');
+      dotsWrap.querySelectorAll('.carousel-dot').forEach(d => {
+        d.addEventListener('click', () => { goTo(parseInt(d.dataset.idx)); startAuto(); });
+      });
+    }
+    goTo(Math.min(current, getMaxIndex()));
+  });
+
+  perPage = getPerPage();
+  goTo(0);
+  startAuto();
 }
 
 }); // end DOMContentLoaded
