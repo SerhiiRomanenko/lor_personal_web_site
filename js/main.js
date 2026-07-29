@@ -493,7 +493,7 @@ function renderContacts(contactsData) {
     if (activeDays.length > 0) {
       const schedLines = activeDays.map(s => {
         let line = `${dayNameShort[s.day_of_week]}: ${s.start_time} — ${s.end_time}`;
-        if (s.lunch_start && s.lunch_end) line += ` (обід ${s.lunch_start} — ${s.lunch_end})`;
+        if (s.lunch_start && s.lunch_end) line += `<br>обід ${s.lunch_start} — ${s.lunch_end}`;
         return line;
       }).join('<br>');
       scheduleHtml = `<div class="contacts__schedule">
