@@ -935,7 +935,7 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async () =>
 
   const locations = [];
   document.querySelectorAll('.location-card-v2').forEach(card => {
-    const locId = card.dataset.locationId ? parseInt(card.dataset.locationId) : null;
+    const locId = card.dataset.locationId || null;
     const city = card.querySelector('.loc-city').value.trim();
     const street = card.querySelector('.loc-street').value.trim();
     const building = card.querySelector('.loc-building').value.trim();

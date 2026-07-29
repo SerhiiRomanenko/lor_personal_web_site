@@ -134,7 +134,7 @@ if (form) {
     timeSelect.innerHTML = '<option value="">Оберіть час</option>';
     if (!locationVal) { timeSelect.innerHTML = '<option value="">Спочатку оберіть адресу</option>'; timeSelect.disabled = true; return; }
     if (!dateVal || !serviceVal) { timeSelect.disabled = false; return; }
-    buildClientTimeSlots(dateVal, serviceVal, parseInt(locationVal));
+    buildClientTimeSlots(dateVal, serviceVal, locationVal);
   }
 
   form.addEventListener('submit', async e => {
@@ -156,7 +156,7 @@ if (form) {
       service: data.get('service'),
       preferred_date: data.get('date'),
       appt_time: timeSelect.value,
-      location_id: locationSelect ? parseInt(locationSelect.value) || null : null,
+      location_id: locationSelect && locationSelect.value ? locationSelect.value : null,
     };
 
     try {
