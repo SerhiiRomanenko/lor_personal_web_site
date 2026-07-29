@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель · ЛОР-лікар</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Login overlay -->
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <div class="login-logo"><i data-lucide="shield-check"></i></div>
+      <h1>Вхід</h1>
+      <p>Введіть пароль для доступу до панелі</p>
+      <form id="loginForm">
+        <div class="input-wrap">
+          <i data-lucide="lock"></i>
+          <input type="password" id="adminPassword" placeholder="Пароль" required autofocus>
+        </div>
+        <button type="submit" class="btn-login">Увійти</button>
+        <p id="loginError" class="error-text"></p>
+      </form>
+      <a href="/" class="login-back"><i data-lucide="arrow-left"></i> На головну</a>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app" class="app" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <i data-lucide="stethoscope"></i>
+          <span>ЛОР-панель</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="panel-left-close"></i></button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i><span>Огляд</span>
+        </a>
+        <a href="#" class="sidebar-item" data-page="appointments">
+          <i data-lucide="calendar"></i><span>Записи</span>
+        </a>
+        <a href="#" class="sidebar-item" data-page="services">
+          <i data-lucide="stethoscope"></i><span>Послуги</span>
+        </a>
+        <a href="#" class="sidebar-item" data-page="faq">
+          <i data-lucide="message-circle"></i><span>FAQ</span>
+        </a>
+        <a href="#" class="sidebar-item" data-page="contacts">
+          <i data-lucide="map-pin"></i><span>Контакти</span>
+        </a>
+        <a href="#" class="sidebar-item" data-page="analytics">
+          <i data-lucide="bar-chart-3"></i><span>Аналітика</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">А</div>
+          <div>
+            <div class="sidebar-name">Адмін</div>
+            <div class="sidebar-role">Повний доступ</div>
+          </div>
+        </div>
+        <button id="logoutBtn" class="sidebar-logout" title="Вийти"><i data-lucide="log-out"></i></button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="topbar-menu" id="topbarMenu"><i data-lucide="panel-left"></i></button>
+          <h1 id="pageTitle">Огляд</h1>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-btn" id="todayBtn" title="Записи на сьогодні"><i data-lucide="calendar-check"></i></button>
+          <a href="/" class="topbar-link" title="Відкрити сайт"><i data-lucide="globe"></i></a>
+        </div>
+      </header>
+
+      <!-- Dashboard page -->
+      <div id="page-dashboard" class="page">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--blue"><i data-lucide="clipboard-list"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="totalCount">0</span>
+              <span class="stat-label">Всього записів</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--amber"><i data-lucide="clock"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="pendingCount">0</span>
+              <span class="stat-label">Очікують</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--green"><i data-lucide="check-circle"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="confirmedCount">0</span>
+              <span class="stat-label">Підтверджено</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon stat-icon--red"><i data-lucide="x-circle"></i></div>
+            <div class="stat-info">
+              <span class="stat-number" id="cancelledCount">0</span>
+              <span class="stat-label">Скасовано</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h3>Записи за датою</h3>
+              <div class="chart-tabs">
+                <button class="chart-tab active" data-range="today">Сьогодні</button>
+                <button class="chart-tab" data-range="week">Тиждень</button>
+                <button class="chart-tab" data-range="month">Місяць</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container"><canvas id="appointmentsChart"></canvas></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Останні заявки</h3>
+              <a href="#" class="card-link" data-nav="appointments">Всі &rarr;</a>
+            </div>
+            <div class="card-body">
+              <div id="recentList" class="recent-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointments page — Calendar -->
+      <div id="page-appointments" class="page" style="display:none;">
+        <div class="cal-card">
+          <!-- Calendar toolbar -->
+          <div class="cal-toolbar">
+            <div class="cal-toolbar-left">
+              <button class="cal-today-btn" id="calTodayBtn">Сьогодні</button>
+              <div class="cal-nav-arrows">
+                <button class="cal-nav-btn" id="calPrevBtn"><i data-lucide="chevron-left"></i></button>
+                <button class="cal-nav-btn" id="calNextBtn"><i data-lucide="chevron-right"></i></button>
+              </div>
+              <h2 class="cal-title" id="calTitle"></h2>
+            </div>
+            <div class="cal-toolbar-right">
+              <div class="cal-view-tabs">
+                <button class="cal-view-tab active" data-view="day">День</button>
+                <button class="cal-view-tab" data-view="week">Тиждень</button>
+                <button class="cal-view-tab" data-view="month">Місяць</button>
+              </div>
+              <button id="addBtn" class="btn-primary"><i data-lucide="plus"></i> Новий запис</button>
+            </div>
+          </div>
+
+          <!-- Week view -->
+          <!-- Week view -->
+          <div id="calWeekView" class="cal-view cal-week-view" style="display:none;">
+            <div class="cal-week-header" id="calWeekHeader"></div>
+            <div class="cal-week-body" id="calWeekBody"></div>
+          </div>
+
+          <!-- Day view -->
+          <div id="calDayView" class="cal-view cal-day-view">
+            <div class="cal-day-header" id="calDayHeader"></div>
+            <div class="cal-day-body" id="calDayBody"></div>
+          </div>
+
+          <!-- Month view -->
+          <div id="calMonthView" class="cal-view cal-month-view" style="display:none;">
+            <div class="cal-month-header" id="calMonthHeader"></div>
+            <div class="cal-month-grid" id="calMonthGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services page -->
+      <div id="page-services" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-header card-header--toolbar">
+            <h3>Послуги та ціни</h3>
+            <button id="addServiceBtn" class="btn-primary"><i data-lucide="plus"></i> Додати</button>
+          </div>
+          <div class="card-body card-body--flush">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px"></th>
+                    <th>Назва</th>
+                    <th>Опис</th>
+                    <th>Ціна</th>
+                    <th style="width:70px">Час</th>
+                    <th class="text-right">Дії</th>
+                  </tr>
+                </thead>
+                <tbody id="servicesBody"></tbody>
+              </table>
+            </div>
+            <p id="servicesEmpty" class="empty-state" style="display:none;">
+              <i data-lucide="inbox"></i> Послуг поки немає
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ page -->
+      <div id="page-faq" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-header card-header--toolbar">
+            <h3>Часті запитання</h3>
+            <button id="addFaqBtn" class="btn-primary"><i data-lucide="plus"></i> Додати</button>
+          </div>
+          <div class="card-body card-body--flush">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px"></th>
+                    <th>Питання</th>
+                    <th>Відповідь</th>
+                    <th class="text-right">Дії</th>
+                  </tr>
+                </thead>
+                <tbody id="faqBody"></tbody>
+              </table>
+            </div>
+            <p id="faqEmpty" class="empty-state" style="display:none;">
+              <i data-lucide="inbox"></i> Запитань поки немає
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts page -->
+      <div id="page-contacts" class="page" style="display:none;">
+        <div class="contacts-admin-wrap">
+          <!-- Phones block -->
+          <div class="card contacts-admin-card">
+            <div class="card-header card-header--toolbar">
+              <h3><i data-lucide="phone"></i> Номери телефонів</h3>
+              <button type="button" class="btn-primary" id="addPhoneBtn"><i data-lucide="plus"></i> Додати</button>
+            </div>
+            <div class="card-body">
+              <div id="phoneList"></div>
+            </div>
+          </div>
+
+          <!-- Addresses block -->
+          <div class="card contacts-admin-card">
+            <div class="card-header card-header--toolbar">
+              <h3><i data-lucide="map-pin"></i> Адреси та графіки</h3>
+              <button type="button" class="btn-primary" id="addAddressBtn"><i data-lucide="plus"></i> Додати адресу</button>
+            </div>
+            <div class="card-body">
+              <div id="addressList"></div>
+            </div>
+          </div>
+
+          <button id="saveSettingsBtn" class="btn-primary" style="width:100%"><i data-lucide="save"></i> Зберегти все</button>
+          <p id="settingsMsg" class="settings-msg" style="text-align:center"></p>
+        </div>
+      </div>
+
+      <!-- Analytics page -->
+      <div id="page-analytics" class="page" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <h3>Послуги — популярність</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-container"><canvas id="servicesChart"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Конверсія статусів</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-container" style="max-width:400px"><canvas id="statusChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Service Modal -->
+  <div id="serviceModal" class="modal" style="display:none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="serviceModalTitle">Додати послугу</h2>
+        <button class="modal-close" id="serviceModalClose"><i data-lucide="x"></i></button>
+      </div>
+      <form id="serviceForm" class="modal-form">
+        <input type="hidden" id="editServiceId">
+        <div class="form-group">
+          <label>Назва послуги</label>
+          <input type="text" id="svcName" required>
+        </div>
+        <div class="form-group">
+          <label>Опис</label>
+          <input type="text" id="svcDesc" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ціна (напр. "від 700 ₴")</label>
+            <input type="text" id="svcPrice" required>
+          </div>
+          <div class="form-group">
+            <label>Тривалість (хв)</label>
+            <input type="number" id="svcDuration" value="30" min="5" max="240" step="5">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="serviceModalCancel">Скасувати</button>
+          <button type="submit" class="btn-primary">Зберегти</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FAQ Modal -->
+  <div id="faqModal" class="modal" style="display:none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="faqModalTitle">Додати запитання</h2>
+        <button class="modal-close" id="faqModalClose"><i data-lucide="x"></i></button>
+      </div>
+      <form id="faqForm" class="modal-form">
+        <input type="hidden" id="editFaqId">
+        <div class="form-group">
+          <label>Питання</label>
+          <input type="text" id="faqQuestion" required>
+        </div>
+        <div class="form-group">
+          <label>Відповідь</label>
+          <textarea id="faqAnswer" rows="3" required style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;font-family:'Inter',sans-serif;resize:vertical"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Порядок</label>
+          <input type="number" id="faqOrder" value="0">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="faqModalCancel">Скасувати</button>
+          <button type="submit" class="btn-primary">Зберегти</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Appointment Modal -->
+  <div id="appointmentModal" class="modal" style="display:none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="appointmentModalTitle">Додати запис</h2>
+        <button class="modal-close" id="appointmentModalClose"><i data-lucide="x"></i></button>
+      </div>
+      <form id="appointmentForm" class="modal-form">
+        <input type="hidden" id="editApptId">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ім'я</label>
+            <input type="text" id="formName" required>
+          </div>
+          <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" id="formPhone" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Послуга</label>
+          <select id="formService" required>
+            <option value="" disabled selected>Оберіть послугу</option>
+            <option>Консультація ЛОР-лікаря</option>
+            <option>Лікування отиту</option>
+            <option>Лікування синуситу</option>
+            <option>Аденотомія</option>
+            <option>Видалення поліпів носа</option>
+            <option>Парацентез барабанної перетинки</option>
+            <option>Алергічний риніт</option>
+            <option>Дитяча отоларингологія</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Дата прийому</label>
+            <input type="date" id="formDate" required>
+          </div>
+          <div class="form-group">
+            <label>Час (вільні слоти)</label>
+            <select id="formTime" required>
+              <option value="">Оберіть дату і послугу</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Нотатки</label>
+            <input type="text" id="formNotes">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="appointmentModalCancel">Скасувати</button>
+          <button type="submit" class="btn-primary">Зберегти</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js?v=13"></script>
+</body>
+</html>

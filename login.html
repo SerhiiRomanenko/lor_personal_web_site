@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вхід · Адмін-панель</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--p:#0e7495;--pd:#0a5a73;--pl:#e0f7fa;--a:#06b6d4;--d:#1e293b;--g:#64748b;--l:#f8fafc;--w:#fff;--r:12px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;color:var(--d);min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--p),var(--a))}
+    .login-box{background:var(--w);padding:48px;border-radius:var(--r);box-shadow:0 8px 40px rgba(0,0,0,.12);text-align:center;max-width:400px;width:90%}
+    .login-box h1{font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:8px}
+    .login-box p{color:var(--g);margin-bottom:24px;font-size:.95rem}
+    .login-box input{width:100%;padding:12px 16px;border:1px solid #e2e8f0;border-radius:8px;font-size:16px;margin-bottom:16px;outline:none;font-family:'Inter',sans-serif}
+    .login-box input:focus{border-color:var(--a)}
+    .btn{width:100%;padding:12px 24px;background:linear-gradient(135deg,var(--p),var(--a));color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .15s,box-shadow .15s}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(6,182,212,.3)}
+    .error{color:#ef4444;font-size:14px;margin-top:12px;min-height:20px}
+    .back{display:block;margin-top:20px;color:var(--g);font-size:14px;text-decoration:none}
+    .back:hover{color:var(--p)}
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>Вхід</h1>
+    <p>Введіть пароль для доступу до панелі</p>
+    <form id="loginForm">
+      <input type="password" id="password" placeholder="Пароль" required autofocus>
+      <button type="submit" class="btn">Увійти</button>
+      <p id="error" class="error"></p>
+    </form>
+    <a href="/" class="back">← На головну</a>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const pwd = document.getElementById('password').value;
+      const err = document.getElementById('error');
+
+      const res = await fetch('/api/appointments?token=' + encodeURIComponent(pwd), {
+        headers: { 'X-Admin-Token': pwd }
+      });
+
+      if (res.ok) {
+        sessionStorage.setItem('adminToken', pwd);
+        location.href = '/admin';
+      } else {
+        err.textContent = 'Невірний пароль';
+      }
+    });
+  </script>
+</body>
+</html>

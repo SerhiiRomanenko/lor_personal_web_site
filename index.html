@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ЛОР-лікар Романенко Олена Юріївна у Бучі. Консультації, лікування отитів, синуситів, аденоїдів. Запис за телефоном 068 864 67 40.">
+  <title>ЛОР-лікар Романенко Олена Юріївна | Буча · Ірпінь · Гостомель</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#" class="header__logo" aria-label="На головну">
+        <svg class="header__logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="42" height="42">
+          <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#0e7495"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+          <rect width="48" height="48" rx="14" fill="url(#logo-grad)"/>
+          <!-- Bowl of Hygieia — staff / stem / base -->
+          <line x1="24" y1="12" x2="24" y2="40" stroke="rgba(255,255,255,.25)" stroke-width="1.6"/>
+          <ellipse cx="24" cy="36" rx="9" ry="2.8" stroke="rgba(255,255,255,.35)" stroke-width="1.5" fill="none"/>
+          <line x1="24" y1="30" x2="24" y2="33" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="24" cy="40" r="1.4" fill="rgba(255,255,255,.45)"/>
+          <!-- Snake S-curve -->
+          <path d="M29 16C29 12 24 11 24 11S19 12 19 16c0 4 5 6 5 10s-5 6-5 10" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+          <!-- Snake head -->
+          <circle cx="29" cy="14.5" r="2.2" fill="#fff"/>
+          <circle cx="29.8" cy="13.8" r=".6" fill="url(#logo-grad)"/>
+        </svg>
+        <div class="header__logo-text">
+          <span class="header__logo-name">Романенко</span>
+          <span class="header__logo-sub">Олена Юріївна · ЛОР-лікар</span>
+        </div>
+      </a>
+
+      <nav class="header__nav" id="headerNav" role="navigation">
+        <a href="#about" class="header__nav-link">Про лікаря</a>
+        <a href="#services" class="header__nav-link">Послуги</a>
+        <a href="#testimonials" class="header__nav-link">Відгуки</a>
+        <a href="#faq" class="header__nav-link">FAQ</a>
+        <a href="#contacts" class="header__nav-link">Контакти</a>
+      </nav>
+
+      <div class="header__actions">
+        <a href="tel:+380688646740" class="header__phone" aria-label="Зателефонувати">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>068 864 67 40</span>
+        </a>
+        <a href="#appointment" class="header__cta">Записатися</a>
+        <a href="/login" class="header__login">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </a>
+        <div class="header__status">
+          <span class="header__status-dot"></span>
+          <span class="header__status-text">Приймає сьогодні</span>
+        </div>
+      </div>
+
+      <!-- Mobile: compact bottom nav bar -->
+      <nav class="header__mobile-nav">
+        <a href="#about" class="header__mobile-link">Лікар</a>
+        <a href="#services" class="header__mobile-link">Послуги</a>
+        <a href="#testimonials" class="header__mobile-link">Відгуки</a>
+        <a href="#contacts" class="header__mobile-link">Контакти</a>
+        <a href="/login" class="header__mobile-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Вхід
+        </a>
+        <a href="tel:+380688646740" class="header__mobile-call">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__bg"></div>
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <h1 class="hero__title">Романенко<br/>Олена Юріївна</h1>
+        <p class="hero__subtitle">Лікар-отоларинголог вищої категорії, кандидат медичних наук. Понад 18 років успішної практики у діагностиці та лікуванні захворювань вуха, носа та горла.</p>
+        <div class="hero__actions">
+        </div>
+      </div>
+      <div class="hero__image">
+        <div class="hero__photo-frame">
+          <div class="hero__photo">
+            <img src="./images/dr.JPG" alt="Романенко Олена Юріївна — ЛОР-лікар"/>
+          </div>
+          <div class="hero__photo-accent"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="container stats__inner">
+      <div class="stats__item">
+        <svg class="stats__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span class="stats__number" id="yearsExperience">18+</span>
+        <span class="stats__label">Років досвіду</span>
+      </div>
+      <div class="stats__item">
+        <svg class="stats__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span class="stats__number">5 000+</span>
+        <span class="stats__label">Пацієнтів</span>
+      </div>
+      <div class="stats__item">
+        <svg class="stats__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span class="stats__number">97%</span>
+        <span class="stats__label">Рекомендують</span>
+      </div>
+      <div class="stats__item">
+        <svg class="stats__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span class="stats__number">20+</span>
+        <span class="stats__label">Видів процедур</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="container about__inner">
+      <div class="about__image">
+        <div class="about__photo">
+          <div class="about__photo-inner">
+            <img src="./images/dr.JPG" alt="Романенко Олена Юріївна"/>
+          </div>
+        </div>
+      </div>
+      <div class="about__content">
+        <span class="section__tag">Про лікаря</span>
+        <h2 class="section__title">Романенко Олена Юріївна</h2>
+        <p class="about__text">Лікар отоларинголог вищої категорії, кандидат медичних наук. Закінчила Буковинський державний медичний університет з відзнакою. Понад 18 років досвіду роботи у провідних клініках України та постійне вдосконалення за кордоном.</p>
+        <p class="about__text">Спеціалізується на діагностиці та безопераційному лікуванні отитів, синуситів, аденоїдів, алергічного риніту, патологій гортані та трахеї. Застосовує сучасні протоколи лікування та мініінвазивні методики.</p>
+        <ul class="about__credentials">
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Вища кваліфікаційна категорія
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Кандидат медичних наук
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Член Асоціації отоларингологів України
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Стажування в клініках Німеччини та Польщі
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">Послуги</span>
+        <h2 class="section__title">Послуги та ціни</h2>
+        <p class="section__description">Повний спектр отоларингологічної допомоги</p>
+      </div>
+      <div class="services__search-wrap">
+        <input type="text" id="servicesSearch" class="services__search" placeholder="Пошук послуги...">
+      </div>
+      <div class="services__table-wrap">
+        <table class="services__table">
+          <thead>
+            <tr>
+              <th class="services__th services__th--name" data-sort="name">Послуга <span class="services__sort-icon">↕</span></th>
+              <th class="services__th services__th--desc">Опис</th>
+              <th class="services__th services__th--price" data-sort="price">Ціна <span class="services__sort-icon">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="servicesTableBody"></tbody>
+        </table>
+      </div>
+      <div id="servicesPagination" class="services__pagination"></div>
+      <p class="services__note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Точну вартість вказує лікар після огляду
+      </p>
+    </div>
+  </section>
+
+  <!-- Appointment -->
+ <section class="appointment" id="appointment">
+    <div class="container appointment__inner">
+      <div class="appointment__content">
+        <h2 class="section__title">Записатися на прийом</h2>
+        <p>Зателефонуйте або залиште заявку — ми зателефонуємо вам протягом 30 хвилин</p>
+        <form class="appointment__form" id="appointmentForm">
+          <input type="text" name="name" placeholder="Ваше ім'я" required>
+          <input type="tel" name="phone" placeholder="Телефон" required>
+          <select name="location" id="appointmentLocation">
+            <option value="" disabled selected>Оберіть адресу</option>
+          </select>
+          <select name="service">
+            <option value="" disabled selected>Оберіть послугу</option>
+            <option>Консультація ЛОР-лікаря</option>
+            <option>Лікування отиту</option>
+            <option>Лікування синуситу</option>
+            <option>Аденотомія</option>
+            <option>Видалення поліпів носа</option>
+            <option>Парацентез барабанної перетинки</option>
+            <option>Алергічний риніт</option>
+            <option>Дитяча отоларингологія</option>
+          </select>
+          <div class="appointment__datetime">
+            <input type="date" name="date">
+            <select name="time" id="appointmentTime">
+              <option value="">Оберіть час</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn--primary btn--full">Надіслати заявку</button>
+        </form>
+        <p class="appointment__confirm" id="formConfirm">&#10004; Дякуємо! Ми зв'яжемося з вами найближчим часом.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">Відгуки</span>
+        <h2 class="section__title">Що кажуть пацієнти</h2>
+      </div>
+      <div class="testimonials__grid">
+        <div class="testimonial-card">
+          <svg class="testimonial-card__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          <p class="testimonial-card__text">Чудовий лікар і приємне ставлення до пацієнтів. Все пояснює доступно, без поспіху, уважно оглядає. Видно, що людина знає свою справу і дійсно хоче допомогти.</p>
+          <div class="testimonial-card__footer">
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">Я</div>
+              <div>
+                <strong>Яна</strong>
+                <span>лютий 2026</span>
+              </div>
+            </div>
+            <svg class="testimonial-card__google" width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <svg class="testimonial-card__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          <p class="testimonial-card__text">Дуже вдячна лікарю. Довгий час лікувалася в різних спеціалістів - без результату. Тут з першого прийому все чітко пояснили, призначили правильне лікування, і нарешті стало значно краще. Лікаря рекомендую!</p>
+          <div class="testimonial-card__footer">
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">И</div>
+              <div>
+                <strong>Ирина</strong>
+                <span>грудень 2025</span>
+              </div>
+            </div>
+            <svg class="testimonial-card__google" width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <svg class="testimonial-card__quote" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          <p class="testimonial-card__text">Мучилася з хронічною проблемою роками, лікувалася в інших клініках — ефекту майже не було. Після звернення до цього лікаря стан покращився вже через кілька днів. Професійний, уважний і дуже компетентний спеціаліст.</p>
+          <div class="testimonial-card__footer">
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">A</div>
+              <div>
+                <strong>Alinochka</strong>
+                <span>березень 2026</span>
+              </div>
+            </div>
+            <svg class="testimonial-card__google" width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">FAQ</span>
+        <h2 class="section__title">Часті запитання</h2>
+      </div>
+      <div class="faq__list">
+        <div class="faq__item">
+          <button class="faq__question">Чи потрібно приходити за попереднім записом? <svg class="faq__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq__answer"><p>Так, прийом ведеться за попереднім записом. Це дозволяє уникнути черги та отримати якісну консультацію.</p></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__question">Чи лікуєте ви дітей? <svg class="faq__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq__answer"><p>Так, приймаю дітей від 3 років. Дитячий прийом проходить у дружній атмосфері, без стресу.</p></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__question">Які способи оплати приймаються? <svg class="faq__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq__answer"><p>Готівка, безготівкова оплата картою. Також можлива оплата через Apple Pay / Google Pay.</p></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__question">Чи видається медична довідка? <svg class="faq__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq__answer"><p>Так, видаються всі необхідні медичні довідки, висновки та направлення.</p></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__question">Скільки триває прийом? <svg class="faq__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq__answer"><p>Звичайна консультація триває 20-30 хвилин. При необхідності процедур — до 1 години.</p></div>
+        </div>
+      </div>
+      <div id="faqPagination" class="faq__pagination"></div>
+    </div>
+  </section>
+
+  <!-- Contacts -->
+  <section class="contacts" id="contacts">
+    <div class="container">
+      <div class="section__header">
+        <span class="section__tag">Контакти</span>
+        <h2 class="section__title">Як нас знайти</h2>
+        <p class="section__description">Зателефонуйте або завітайте за адресою — прийом за попереднім записом</p>
+      </div>
+      <div class="contacts__inner">
+        <div class="contacts__dynamic" id="contactsDynamic"></div>
+        <div class="contacts__map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1538.5!2d30.1920605!3d50.5412368!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x472b31001492d017%3A0xa2d039c6879c7004!2zLCDihJDniJ_huInilLjluoAg4bie4bie4bie4ZmI4ZyQ4Zi_4Zmi4ZiB4Z2M4Zub4Zi44ZmG4Z2J!5e0!3m2!1suk!2sua!4v1700000000000&maptype=roadmap" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <a href="#" class="footer__brand">
+        <span class="footer__brand-name">Романенко О.Ю.</span>
+        <span class="footer__brand-desc">ЛОР-лікар · Буча · Ірпінь · Гостомель</span>
+      </a>
+      <nav class="footer__nav">
+        <a href="#about">Про лікаря</a>
+        <a href="#services">Послуги</a>
+        <a href="#testimonials">Відгуки</a>
+        <a href="#contacts">Контакти</a>
+      </nav>
+      <a href="tel:+380688646740" class="footer__phone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>  068 864 67 40</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
