@@ -493,7 +493,7 @@ function renderContacts(contactsData) {
     if (activeDays.length > 0) {
       const schedLines = activeDays.map(s => {
         let line = `${dayNameShort[s.day_of_week]}: ${s.start_time} — ${s.end_time}`;
-        if (s.lunch_start && s.lunch_end) line += `<br>обід ${s.lunch_start} — ${s.lunch_end}`;
+        if (s.lunch_start && s.lunch_end) line += `<br><span class="contacts__lunch">(обід ${s.lunch_start} — ${s.lunch_end})</span>`;
         return line;
       }).join('<br>');
       scheduleHtml = `<div class="contacts__schedule">
@@ -531,6 +531,7 @@ function renderContacts(contactsData) {
     const footerPhones = document.querySelectorAll('.footer__phone');
     footerPhones.forEach(el => {
       const svg = el.querySelector('svg');
+      el.href = 'tel:' + telLink;
       if (svg) {
         el.innerHTML = svg.outerHTML + '  ' + esc(phones[0].phone);
       } else {

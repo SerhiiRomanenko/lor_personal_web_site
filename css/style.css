@@ -170,6 +170,7 @@ a{text-decoration:none;color:inherit}
 .contacts__schedule{margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,.06)}
 .contacts__schedule-title{display:block;font-size:.78rem;color:var(--g);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
 .contacts__schedule-value{display:block;font-size:.95rem;font-weight:600;color:var(--d);line-height:1.75}
+.contacts__lunch{font-weight:400;font-size:.88rem;color:var(--g)}
 .contacts__schedule-value span{opacity:.6;font-weight:400;font-size:.88rem}
 .contacts__map{border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.06);height:100%;min-height:380px;border:1px solid rgba(0,0,0,.04)}
 .contacts__map iframe{height:100%;border-radius:16px}
@@ -182,7 +183,7 @@ a{text-decoration:none;color:inherit}
 .footer__nav{display:flex;gap:24px}
 .footer__nav a{font-size:.88rem;color:rgba(255,255,255,.55);transition:color .2s}
 .footer__nav a:hover{color:#fff}
-.footer__phone{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.8);transition:color .2s}
+.footer__phone{font-size:.95rem;font-weight:600;color:rgba(255,255,255,.8);transition:color .2s;display:flex;align-items:center;gap:6px}
 .footer__phone:hover{color:#fff}
 /* Reveal animations */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}

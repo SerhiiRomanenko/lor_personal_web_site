@@ -374,7 +374,7 @@ function renderWeek() {
       bHtml += `<div class="cal-appt cal-appt--${a.status}"
         data-id="${a.id}"
         style="top:${pos}px;height:${height}px;left:${leftPct}%;width:${widthPct}%"
-        onclick="openApptDetail(${a.id})">
+        onclick="openApptDetail('${a.id}')">
         <div class="cal-appt-time">${fmtTime(a.appt_time || '09:00')}</div>
         <div class="cal-appt-name">${esc(a.name)}</div>
         <div class="cal-appt-service">${esc(a.service)}</div>
@@ -415,7 +415,7 @@ function renderDay() {
     bHtml += `<div class="cal-appt cal-appt--${a.status}"
       data-id="${a.id}"
       style="top:${pos}px;height:${height}px"
-      onclick="openApptDetail(${a.id})">
+      onclick="openApptDetail('${a.id}')">
       <div class="cal-appt-time">${fmtTime(a.appt_time || '09:00')}</div>
       <div class="cal-appt-name">${esc(a.name)}</div>
       <div class="cal-appt-service">${esc(a.service)}</div>
@@ -454,7 +454,7 @@ function renderMonth() {
     html += `<div class="cal-month-cell ${cls}" onclick="calDate=new Date('${ds}');calView='day';document.querySelectorAll('.cal-view-tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='day'));document.getElementById('calWeekView').style.display='none';document.getElementById('calDayView').style.display='flex';document.getElementById('calMonthView').style.display='none';renderCalendar();">`;
     html += `<div class="cal-month-cell-num">${cellDate.getDate()}</div>`;
     dayAppts.slice(0, 3).forEach(a => {
-      html += `<div class="cal-month-appt cal-month-appt--${a.status}" onclick="event.stopPropagation();openApptDetail(${a.id})">${fmtTime(a.appt_time || '09:00')} ${esc(a.name)}</div>`;
+      html += `<div class="cal-month-appt cal-month-appt--${a.status}" onclick="event.stopPropagation();openApptDetail('${a.id}')">${fmtTime(a.appt_time || '09:00')} ${esc(a.name)}</div>`;
     });
     if (dayAppts.length > 3) html += `<div style="font-size:10px;color:var(--g)">+${dayAppts.length - 3} ще</div>`;
     html += '</div>';
@@ -553,7 +553,7 @@ window.openApptCreate = function(dateStr) {
 };
 
 window.openApptDetail = async function(id) {
-  if (!Number.isInteger(id)) return;
+  if (!id) return;
   const all = await fetchAll('/api/appointments');
   const a = all.find(x => x.id === id);
   if (!a) return;
