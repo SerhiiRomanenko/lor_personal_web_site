@@ -293,7 +293,19 @@ a{text-decoration:none;color:inherit}
   .stats__item:nth-child(n+3){border-radius:0 0 16px 16px}
   .stats__item:nth-child(odd){border-right:1px solid rgba(0,0,0,.05)}
   .services__grid{grid-template-columns:1fr}
+  /* Services table → cards on mobile */
+  .services__table-wrap{box-shadow:none}
+  .services__table{display:block}
+  .services__table thead{display:none}
+  .services__table tbody{display:flex;flex-direction:column;gap:8px}
+  .services__table tbody tr{display:flex;flex-direction:column;background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.04)}
+  .services__table tbody td{display:block;padding:0!important;border:none!important;text-align:left!important;white-space:normal!important}
+  .services__table tbody td:first-child{font-size:15px;font-weight:600;color:var(--d);padding-bottom:6px}
+  .services__table tbody td:nth-child(2){font-size:13px;color:var(--g);line-height:1.5;padding-bottom:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .services__table tbody td:last-child{font-size:15px;font-weight:700;color:var(--p);background:var(--pl);display:inline-block;padding:5px 12px;border-radius:8px;align-self:flex-start;width:auto!important}
+  .services__desc{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .appointment__datetime{grid-template-columns:1fr}
+  .appointment__datetime input,.appointment__datetime select{width:100%!important;max-width:none!important}
   .carousel-btn{display:none}
   .testimonials__carousel{gap:0}
   .testimonial-card{flex:0 0 100%;padding:28px 22px}
