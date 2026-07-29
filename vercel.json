@@ -1,7 +1,6 @@
 {
   "rewrites": [
     { "source": "/login", "destination": "/login.html" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/api/:path*", "destination": "https://lor-personal-web-site-back-end.onrender.com/api/:path*" }
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }

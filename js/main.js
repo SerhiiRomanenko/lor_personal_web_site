@@ -160,7 +160,7 @@ if (form) {
     };
 
     try {
-      const res = await fetch('/api/appointments', {
+      const res = await fetchWithRetry(API_BASE_URL + '/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -256,10 +256,19 @@ if (dateInput) {
 }
 
 /* ========== Dynamic content ========== */
+async function fetchWithRetry(url, opts) {
+  for (var i = 0; i < 4; i++) {
+    var res = await fetch(url, opts);
+    if (res.ok) return res;
+    if (i < 3) await new Promise(function(r) { setTimeout(r, 2000 * (i + 1)); });
+  }
+  return res;
+}
+
 async function loadDynamicContent() {
   try {
     /* --- Services --- */
-    const svcRes = await fetch('/api/services');
+    var svcRes = await fetchWithRetry(API_BASE_URL + '/api/services');
     if (svcRes.ok) {
       const services = await svcRes.json();
       renderServices(services);
@@ -278,14 +287,14 @@ async function loadDynamicContent() {
     }
 
     /* --- FAQ --- */
-    const faqRes = await fetch('/api/faq');
+    var faqRes = await fetchWithRetry(API_BASE_URL + '/api/faq');
     if (faqRes.ok) {
       const faqs = await faqRes.json();
       renderFaq(faqs, true);
     }
 
     /* --- Contacts (phones, locations, schedules) --- */
-    const contactsRes = await fetch('/api/contacts');
+    var contactsRes = await fetchWithRetry(API_BASE_URL + '/api/contacts');
     if (contactsRes.ok) {
       const contactsData = await contactsRes.json();
       renderContacts(contactsData);
@@ -554,7 +563,7 @@ async function buildClientTimeSlots(dateVal, serviceVal, locationId) {
   let isClosed = false;
 
   try {
-    const schedRes = await fetch('/api/locations/' + locationId + '/schedules');
+    const schedRes = await fetch(API_BASE_URL + '/api/locations/' + locationId + '/schedules');
     if (schedRes.ok) {
       const schedules = await schedRes.json();
       const daySched = schedules.find(s => s.day_of_week === selectedDay);
@@ -585,13 +594,13 @@ async function buildClientTimeSlots(dateVal, serviceVal, locationId) {
 
   // Get service duration
   let services = [];
-  try { services = await fetch('/api/services').then(r => r.json()); } catch(e) {}
+  try { services = await fetch(API_BASE_URL + '/api/services').then(r => r.json()); } catch(e) {}
   const svc = services.find(s => s.name === serviceVal);
   const duration = svc ? (svc.duration || 30) : 30;
 
   // Get existing appointments for this day at this location
   let existing = [];
-  try { existing = await fetch('/api/appointments?token=public').then(r => r.json()); } catch(e) {}
+  try { existing = await fetch(API_BASE_URL + '/api/appointments?token=public').then(r => r.json()); } catch(e) {}
   const dayAppts = existing.filter(a => a.preferred_date === dateVal && a.status !== 'cancelled' && (!a.location_id || a.location_id === locationId));
 
   // Generate slots

@@ -34,13 +34,14 @@
     <a href="/" class="back">← На головну</a>
   </div>
 
+  <script src="js/config.js"></script>
   <script>
     document.getElementById('loginForm').addEventListener('submit', async e => {
       e.preventDefault();
       const pwd = document.getElementById('password').value;
       const err = document.getElementById('error');
 
-      const res = await fetch('/api/appointments?token=' + encodeURIComponent(pwd), {
+      const res = await fetch(API_BASE_URL + '/api/appointments?token=' + encodeURIComponent(pwd), {
         headers: { 'X-Admin-Token': pwd }
       });
 

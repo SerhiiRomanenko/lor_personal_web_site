@@ -14,7 +14,7 @@ if (adminToken) verifyToken();
 
 async function verifyToken() {
   try {
-    const r = await fetch('/api/appointments?token=' + encodeURIComponent(adminToken));
+    const r = await fetch(API_BASE_URL + '/api/appointments?token=' + encodeURIComponent(adminToken));
     if (r.ok) showApp();
     else { sessionStorage.removeItem('adminToken'); adminToken = ''; }
   } catch(e) { /* ignore */ }
@@ -25,7 +25,7 @@ document.getElementById('loginForm').addEventListener('submit', e => {
   const pwd = document.getElementById('adminPassword').value;
   const errEl = document.getElementById('loginError');
   errEl.textContent = '';
-  fetch('/api/appointments?token=' + encodeURIComponent(pwd))
+  fetch(API_BASE_URL + '/api/appointments?token=' + encodeURIComponent(pwd))
     .then(r => {
       if (r.ok) { adminToken = pwd; sessionStorage.setItem('adminToken', adminToken); showApp(); }
       else errEl.textContent = 'Невірний пароль';
@@ -595,14 +595,14 @@ async function buildTimeSlots(dateVal, serviceVal) {
 
   // Get services and find duration
   let services = [];
-  try { services = await fetch('/api/services').then(r => r.json()); } catch(e) {}
+  try { services = await fetch(API_BASE_URL + '/api/services').then(r => r.json()); } catch(e) {}
   const svc = services.find(s => s.name === serviceVal);
   const duration = svc ? (svc.duration || 30) : 30;
 
   // Get settings for work hours (default 09:00-18:00)
   let workStart = 9, workEnd = 18;
   try {
-    const settings = await fetch('/api/settings').then(r => r.json());
+    const settings = await fetch(API_BASE_URL + '/api/settings').then(r => r.json());
     const sched = settings.schedule || 'Пн-Пт: 09:00 — 18:00';
     const match = sched.match(/(\d{1,2}):\d{2}/);
     if (match) workStart = parseInt(match[0].split(':')[0]);
@@ -924,6 +924,11 @@ document.getElementById('addPhoneBtn').addEventListener('click', () => addPhoneR
 document.getElementById('addAddressBtn').addEventListener('click', () => addLocationCardV2(null, []));
 
 document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveSettingsBtn');
+  const msg = document.getElementById('settingsMsg');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаю...';
+  msg.textContent = '';
   const phones = [...document.querySelectorAll('.phone-input')]
     .map((inp, i) => ({ phone: inp.value.trim(), sort_order: i }))
     .filter(p => p.phone);
@@ -956,9 +961,10 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async () =>
 
   await api('/api/contacts/bulk', 'POST', { phones, locations });
 
-  const msg = document.getElementById('settingsMsg');
   msg.textContent = '✓ Збережено!';
   setTimeout(() => { msg.textContent = ''; }, 2500);
+  btn.disabled = false;
+  btn.textContent = '\u{f0c7} Зберегти все';
 });
 
 /* ===================== ANALYTICS ===================== */
@@ -1064,32 +1070,33 @@ function initDragDrop(tbody, endpoint) {
 /* ===================== HELPERS ===================== */
 async function fetchAll(url) {
   const sep = url.includes('?') ? '&' : '?';
-  const fullUrl = url + sep + 'token=' + encodeURIComponent(adminToken);
-  // console.log('[API] GET', fullUrl);
-  const res = await fetch(fullUrl);
-  if (!res.ok) throw new Error('HTTP ' + res.status + ' on ' + url);
-  return res.json();
+  const fullUrl = API_BASE_URL + url + sep + 'token=' + encodeURIComponent(adminToken);
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(fullUrl);
+    if (res.ok) return res.json();
+    if (attempt < 3) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+  }
+  throw new Error('HTTP ' + (await httpStatus(fullUrl)) + ' on ' + url);
+}
+
+async function httpStatus(url) {
+  try { await fetch(url); return 200; } catch(e) { return 0; }
 }
 
 async function api(url, method, body) {
   const sep = url.includes('?') ? '&' : '?';
-  const fullUrl = url + sep + 'token=' + encodeURIComponent(adminToken);
-  // Retry on 502 (Render free tier cold start)
-  for (let attempt = 0; attempt < 3; attempt++) {
+  const fullUrl = API_BASE_URL + url + sep + 'token=' + encodeURIComponent(adminToken);
+  for (let attempt = 0; attempt < 4; attempt++) {
     const opts = {
       method,
       headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
     };
     if (body) opts.body = JSON.stringify(body);
     const res = await fetch(fullUrl, opts);
-    if (res.status === 502) {
-      await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-      continue;
-    }
-    if (!res.ok) throw new Error('HTTP ' + res.status + ' on ' + url);
-    return res.json();
+    if (res.ok) return res.json();
+    if (attempt < 3) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
   }
-  throw new Error('HTTP 502 on ' + url + ' after 3 retries');
+  throw new Error('HTTP failed on ' + url);
 }
 
 function fmtDate(dateStr) {
