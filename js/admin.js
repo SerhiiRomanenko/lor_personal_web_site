@@ -207,6 +207,48 @@ const dayNamesFull = ['Неділя', 'Понеділок', 'Вівторок', 
 const monthNames = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
   'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
 const HOURS = Array.from({ length: 14 }, (_, i) => i + 7); // 07:00 — 20:00
+let calSchedules = null; // loaded location schedules for dynamic calendar hours
+
+async function loadCalSchedules() {
+  try {
+    calSchedules = await fetchAll('/api/contacts');
+  } catch(e) {
+    calSchedules = { locations: [], schedules: {} };
+  }
+}
+
+function getDayWorkHours(dayOfWeek) {
+  // Find work hours for a specific day of week from loaded schedules
+  const defaultStart = 9;
+  const defaultEnd = 18;
+
+  if (!calSchedules || !calSchedules.schedules) return { start: defaultStart, end: defaultEnd };
+
+  // Check all locations for this day
+  for (const locId in calSchedules.schedules) {
+    const daySched = calSchedules.schedules[locId].find(s => s.day_of_week === dayOfWeek);
+    if (daySched && daySched.start_time && daySched.end_time) {
+      const [sh, sm] = daySched.start_time.split(':').map(Number);
+      const [eh, em] = daySched.end_time.split(':').map(Number);
+      return {
+        start: sh + sm / 60,
+        end: eh + em / 60
+      };
+    }
+  }
+  return { start: defaultStart, end: defaultEnd };
+}
+
+function buildDayHours(dayOfWeek) {
+  const hours = getDayWorkHours(dayOfWeek);
+  const startMin = Math.floor(hours.start) * 60;
+  const endMin = Math.ceil(hours.end) * 60 + 60; // add 1 hour buffer
+  const result = [];
+  for (let m = startMin; m < endMin; m += 30) {
+    result.push({ h: Math.floor(m / 60), m: m % 60 });
+  }
+  return result;
+}
 
 async function loadAppointments() {
   // console.log('[CAL] loading appointments');
@@ -216,6 +258,7 @@ async function loadAppointments() {
   // Seed mock data if empty
   if (all.length === 0) seedMockAppointments();
 
+  await loadCalSchedules();
   renderCalendar();
   updateCurrentTimeLine();
   setInterval(updateCurrentTimeLine, 60000);
@@ -341,32 +384,46 @@ function renderWeek() {
   }
   header.innerHTML = hHtml;
 
+  // Find global min start across all days for time column
+  let globalStart = 23;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ws);
+    d.setDate(d.getDate() + i);
+    const dow = d.getDay();
+    const wh = getDayWorkHours(dow);
+    if (Math.floor(wh.start) < globalStart) globalStart = Math.floor(wh.start);
+  }
+
   // Body
   let bHtml = '<div class="cal-week-grid">';
   bHtml += '<div class="cal-week-times">';
-  HOURS.forEach(h => {
+  for (let h = globalStart; h <= 21; h++) {
     bHtml += `<div class="cal-week-time-label">${String(h).padStart(2, '0')}:00</div>`;
-  });
+  }
   bHtml += '</div>';
 
   for (let i = 0; i < 7; i++) {
     const d = new Date(ws);
     d.setDate(d.getDate() + i);
     const ds = iso(d);
+    const dow = d.getDay();
     const today = isToday(d) ? ' today-col' : '';
     const dayAppts = getApptsForDay(ds);
+    const wh = getDayWorkHours(dow);
+    const startH = Math.floor(wh.start);
+    const endH = Math.ceil(wh.end);
 
     // Calculate layout for overlapping
     const layout = computeLayout(dayAppts);
 
     bHtml += `<div class="cal-week-col${today}" data-date="${ds}">`;
-    HOURS.forEach(h => {
-      bHtml += `<div class="cal-slot-line" style="top:${(h - 7) * 60}px"></div>`;
-      bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${(h - 7) * 60 + 30}px"></div>`;
-    });
+    for (let h = startH; h <= endH; h++) {
+      bHtml += `<div class="cal-slot-line" style="top:${(h - globalStart) * 60}px"></div>`;
+      bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${(h - globalStart) * 60 + 30}px"></div>`;
+    }
 
     layout.forEach(a => {
-      const pos = timeToTop(a.appt_time || '09:00');
+      const pos = timeToTopDynamic(a.appt_time || '09:00', globalStart);
       const height = 50;
       const totalCols = a._group.length;
       const leftPct = (a._colIndex / totalCols) * 100;
@@ -392,25 +449,31 @@ function renderWeek() {
 function renderDay() {
   const d = calDate;
   const ds = iso(d);
+  const dow = d.getDay();
   const header = document.getElementById('calDayHeader');
-  header.innerHTML = `${dayNamesFull[d.getDay()]}<span>, ${d.getDate()} ${monthNames[d.getMonth()]}</span>`;
+  header.innerHTML = `${dayNamesFull[dow]}<span>, ${d.getDate()} ${monthNames[d.getMonth()]}</span>`;
 
   const body = document.getElementById('calDayBody');
   const dayAppts = getApptsForDay(ds);
   const layout = computeLayout(dayAppts);
   const today = isToday(d) ? ' today-col' : '';
+  const wh = getDayWorkHours(dow);
+  const startH = Math.floor(wh.start);
+  const endH = Math.ceil(wh.end);
 
   let bHtml = '<div class="cal-week-times">';
-  HOURS.forEach(h => { bHtml += `<div class="cal-week-time-label">${String(h).padStart(2, '0')}:00</div>`; });
+  for (let h = startH; h <= endH; h++) {
+    bHtml += `<div class="cal-week-time-label">${String(h).padStart(2, '0')}:00</div>`;
+  }
   bHtml += '</div><div class="cal-day-timeline' + today + '">';
 
-  HOURS.forEach(h => {
-    bHtml += `<div class="cal-slot-line" style="top:${(h - 7) * 60}px"></div>`;
-    bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${(h - 7) * 60 + 30}px"></div>`;
-  });
+  for (let h = startH; h <= endH; h++) {
+    bHtml += `<div class="cal-slot-line" style="top:${(h - startH) * 60}px"></div>`;
+    bHtml += `<div class="cal-slot-line cal-slot-line-half" style="top:${(h - startH) * 60 + 30}px"></div>`;
+  }
 
   layout.forEach(a => {
-    const pos = timeToTop(a.appt_time || '09:00');
+    const pos = timeToTopDynamic(a.appt_time || '09:00', startH);
     const height = 55;
     bHtml += `<div class="cal-appt cal-appt--${a.status}"
       data-id="${a.id}"
@@ -508,11 +571,19 @@ function getEndTime(a) {
   return `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}`;
 }
 
+function timeToTopDynamic(timeStr, baseHour) {
+  const [h, m] = timeStr.split(':').map(Number);
+  return (h - baseHour) * 60 + m;
+}
+
 function updateCurrentTimeLine() {
   const now = new Date();
   const todayStr = iso(now);
-  const minutes = (now.getHours() - 7) * 60 + now.getMinutes();
-  if (minutes < 0 || minutes > 14 * 60) return;
+  const dow = now.getDay();
+  const wh = getDayWorkHours(dow);
+  const baseHour = Math.floor(wh.start);
+  const minutes = (now.getHours() - baseHour) * 60 + now.getMinutes();
+  if (minutes < 0) return;
 
   document.querySelectorAll('.cal-week-col.today-col, .cal-day-timeline.today-col').forEach(col => {
     let line = col.querySelector('.cal-current-line');

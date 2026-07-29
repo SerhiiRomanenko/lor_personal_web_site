@@ -6,6 +6,42 @@ const mobileNav = document.querySelector('.header__mobile-nav');
 const form = document.getElementById('appointmentForm');
 const formConfirm = document.getElementById('formConfirm');
 
+/* ========== Header status: "Приймає сьогодні" / "Не приймає сьогодні" ========== */
+const headerStatus = document.querySelector('.header__status');
+const statusText = document.querySelector('.header__status-text');
+const statusDot = document.querySelector('.header__status-dot');
+let schedulesData = null;
+
+window.updateHeaderStatus = function(schedules) {
+  schedulesData = schedules;
+  const todayDow = new Date().getDay(); // 0=Нд, 1=Пн, ... 6=Сб
+  let accepting = false;
+
+  // Check all locations for today's schedule
+  for (const locId in schedules) {
+    const daySched = schedules[locId].find(s => s.day_of_week === todayDow);
+    if (daySched && daySched.start_time && daySched.end_time) {
+      accepting = true;
+      break;
+    }
+  }
+
+  if (accepting) {
+    statusText.textContent = 'Приймає сьогодні';
+    statusDot.style.background = '#22c55e';
+  } else {
+    statusText.textContent = 'Не приймає сьогодні';
+    statusDot.style.background = '#ef4444';
+  }
+};
+
+if (headerStatus) {
+  headerStatus.style.cursor = 'pointer';
+  headerStatus.addEventListener('click', () => {
+    document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
 /* ========== Dynamic content from API ========== */
 loadDynamicContent();
 
@@ -270,14 +306,14 @@ async function loadDynamicContent() {
     /* --- Services --- */
     var svcRes = await fetchWithRetry(API_BASE_URL + '/api/services');
     if (svcRes.ok) {
-      const services = await svcRes.json();
-      renderServices(services);
+      gServices = await svcRes.json();
+      renderServices(gServices);
 
       /* --- Update select in appointment form --- */
       const select = document.querySelector('#appointmentForm select[name="service"]');
       if (select) {
         select.innerHTML = '<option value="" disabled selected>Оберіть послугу</option>';
-        services.forEach(s => {
+        gServices.forEach(s => {
           const opt = document.createElement('option');
           opt.value = s.name;
           opt.textContent = s.name;
@@ -296,14 +332,15 @@ async function loadDynamicContent() {
     /* --- Contacts (phones, locations, schedules) --- */
     var contactsRes = await fetchWithRetry(API_BASE_URL + '/api/contacts');
     if (contactsRes.ok) {
-      const contactsData = await contactsRes.json();
-      renderContacts(contactsData);
+      gContactsData = await contactsRes.json();
+      renderContacts(gContactsData);
+      updateHeaderStatus(gContactsData.schedules);
 
       /* --- Populate location dropdown --- */
       const locationSelect = document.getElementById('appointmentLocation');
-      if (locationSelect && contactsData.locations.length > 0) {
+      if (locationSelect && gContactsData.locations.length > 0) {
         locationSelect.innerHTML = '<option value="" disabled selected>Оберіть адресу</option>';
-        contactsData.locations.forEach(loc => {
+        gContactsData.locations.forEach(loc => {
           const addr = [loc.city, loc.street, loc.building].filter(Boolean).join(', ');
           const opt = document.createElement('option');
           opt.value = loc.id;
@@ -312,6 +349,12 @@ async function loadDynamicContent() {
         });
       }
     }
+
+    /* --- Load existing appointments for slot calculation --- */
+    try {
+      var apptRes = await fetchWithRetry(API_BASE_URL + '/api/appointments');
+      if (apptRes.ok) gAppointments = await apptRes.json();
+    } catch(e) {}
   } catch (e) {
     // API not available (static server) — keep static HTML
   }
@@ -547,6 +590,18 @@ function esc(str) {
   return div.innerHTML;
 }
 
+// Global cache for appointment system
+let gServices = [];
+let gContactsData = { phones: [], locations: [], schedules: {} };
+let gAppointments = [];
+
+// Check if a date (day of week) is a working day for the given location
+function isWorkingDay(dateStr, locationId) {
+  const dow = new Date(dateStr).getDay();
+  const locSchedules = gContactsData.schedules[locationId] || [];
+  return locSchedules.some(s => s.day_of_week === dow && s.start_time && s.end_time);
+}
+
 async function buildClientTimeSlots(dateVal, serviceVal, locationId) {
   const select = document.getElementById('appointmentTime');
   if (!select) return;
@@ -556,55 +611,43 @@ async function buildClientTimeSlots(dateVal, serviceVal, locationId) {
 
   const selectedDay = new Date(dateVal).getDay();
 
-  // Get location schedule
-  let workStart = 9 * 60;
-  let workEnd = 18 * 60;
-  let lunchStart = null;
-  let lunchEnd = null;
-  let isClosed = false;
+  // Get schedule for this location and day from cached data
+  const locSchedules = gContactsData.schedules[locationId] || [];
+  const daySched = locSchedules.find(s => s.day_of_week === selectedDay);
 
-  try {
-    const schedRes = await fetch(API_BASE_URL + '/api/locations/' + locationId + '/schedules');
-    if (schedRes.ok) {
-      const schedules = await schedRes.json();
-      const daySched = schedules.find(s => s.day_of_week === selectedDay);
-      if (!daySched || !daySched.start_time) {
-        isClosed = true;
-      } else {
-        const [sh, sm] = daySched.start_time.split(':').map(Number);
-        const [eh, em] = daySched.end_time.split(':').map(Number);
-        workStart = sh * 60 + sm;
-        workEnd = eh * 60 + em;
-        if (daySched.lunch_start) {
-          const [lsh, lsm] = daySched.lunch_start.split(':').map(Number);
-          lunchStart = lsh * 60 + lsm;
-        }
-        if (daySched.lunch_end) {
-          const [leh, lem] = daySched.lunch_end.split(':').map(Number);
-          lunchEnd = leh * 60 + lem;
-        }
-      }
-    }
-  } catch(e) {}
-
-  if (isClosed) {
+  if (!daySched || !daySched.start_time) {
     select.innerHTML = '<option value="">Цей день — вихідний</option>';
     select.disabled = true;
     return;
   }
 
-  // Get service duration
-  let services = [];
-  try { services = await fetch(API_BASE_URL + '/api/services').then(r => r.json()); } catch(e) {}
-  const svc = services.find(s => s.name === serviceVal);
+  const [sh, sm] = daySched.start_time.split(':').map(Number);
+  const [eh, em] = daySched.end_time.split(':').map(Number);
+  let workStart = sh * 60 + sm;
+  let workEnd = eh * 60 + em;
+  let lunchStart = null, lunchEnd = null;
+
+  if (daySched.lunch_start) {
+    const [ls, lm] = daySched.lunch_start.split(':').map(Number);
+    lunchStart = ls * 60 + lm;
+  }
+  if (daySched.lunch_end) {
+    const [le, lm2] = daySched.lunch_end.split(':').map(Number);
+    lunchEnd = le * 60 + lm2;
+  }
+
+  // Get service duration from cached services
+  const svc = gServices.find(s => s.name === serviceVal);
   const duration = svc ? (svc.duration || 30) : 30;
 
-  // Get existing appointments for this day at this location
-  let existing = [];
-  try { existing = await fetch(API_BASE_URL + '/api/appointments?token=public').then(r => r.json()); } catch(e) {}
-  const dayAppts = existing.filter(a => a.preferred_date === dateVal && a.status !== 'cancelled' && (!a.location_id || a.location_id === locationId));
+  // Get existing appointments for this day at this location from cache
+  const dayAppts = gAppointments.filter(a =>
+    a.preferred_date === dateVal &&
+    a.status !== 'cancelled' &&
+    (!a.location_id || a.location_id === String(locationId))
+  );
 
-  // Generate slots
+  // Generate available slots (every 15 min)
   const slotMinutes = 15;
   let slotCount = 0;
 
@@ -621,7 +664,7 @@ async function buildClientTimeSlots(dateVal, serviceVal, locationId) {
       if (!at) continue;
       const [ah, am2] = at.split(':').map(Number);
       const aStart = ah * 60 + am2;
-      const aSvc = services.find(s => s.name === a.service);
+      const aSvc = gServices.find(s => s.name === a.service);
       const aDur = aSvc ? (aSvc.duration || 30) : 30;
       const aEnd = aStart + aDur;
       const slotEnd = m + duration;
